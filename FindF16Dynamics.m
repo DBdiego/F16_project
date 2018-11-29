@@ -336,4 +336,28 @@ if bode_plots_wanted
     end
 end
 
+states = {'npos' 'epos' 'alt' 'phi' 'theta' 'psi' 'vel' 'alpha' 'beta' 'p' 'q' 'r' 'nx' 'ny' 'nz' 'mach' 'qbar' 'ps'};
+outputs = {'npos' 'epos' 'alt' 'phi' 'theta' 'psi' 'vel' 'alpha' 'beta' 'p' 'q' 'r' 'nx' 'ny' 'nz' 'mach' 'qbar' 'ps' 'an'};
+sys_mimo = ss(SS_lo.A,SS_lo.B,SS_lo.C,SS_lo.D,'statename',states,...
+    'inputname',inputs,...
+    'outputname',outputs);
+%tf(sys_mimo) to see all the transfer function. Search for "from elevator
+%to an" to find 5.5 answer
+
+all_tfs=tf(sys_mimo);
+
+%Find from elevator to an TF
+
+an_de_num=cell2mat(all_tfs.Numerator(19,2));
+an_de_den=cell2mat(all_tfs.Denominator(19,2));
+H_an_de=tf(an_de_num,an_de_den);
+
+H_an_de_minreal=minreal(H_an_de);
+
+%zpk(H_an_de_minreal) fact
+
+%Simulate response to a negative step input
+H_an_de=-1*H_an_de;
+step(H_an_de);
+
 save('./Chapter 5/FindF16Dynaimcs_workspace.mat')
