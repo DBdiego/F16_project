@@ -19,7 +19,7 @@ newline = sprintf('\n');
 
 %% Initial Values
 %%
-x_a = 0;       %[ft.]
+x_a = 0*0.3048;       %[ft.]
 gD = 9.80665;  %[m/s^2]
 
 bode_plots_wanted  = 0; %[Boolean]
@@ -336,6 +336,7 @@ if bode_plots_wanted
     end
 end
 
+inputs = {'Thrust' 'Elevator' 'aileron' 'rudder'}
 states = {'npos' 'epos' 'alt' 'phi' 'theta' 'psi' 'vel' 'alpha' 'beta' 'p' 'q' 'r' 'nx' 'ny' 'nz' 'mach' 'qbar' 'ps'};
 outputs = {'npos' 'epos' 'alt' 'phi' 'theta' 'psi' 'vel' 'alpha' 'beta' 'p' 'q' 'r' 'nx' 'ny' 'nz' 'mach' 'qbar' 'ps' 'an'};
 sys_mimo = ss(SS_lo.A,SS_lo.B,SS_lo.C,SS_lo.D,'statename',states,...
