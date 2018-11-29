@@ -19,8 +19,9 @@ newline = sprintf('\n');
 
 %% Initial Values
 %%
-x_a = 0*0.3048;       %[ft.]
-gD = 9.80665;  %[m/s^2]
+x_a_label = 15;
+x_a = x_a_label*0.3048 ; %[ft.]
+gD  = 9.80665          ; %[m/s^2]
 
 bode_plots_wanted  = 0; %[Boolean]
 polar_plots_wanted = 0; %[Boolean]
@@ -336,12 +337,13 @@ if bode_plots_wanted
     end
 end
 
-inputs = {'Thrust' 'Elevator' 'aileron' 'rudder'}
+inputs = {'Thrust' 'Elevator' 'aileron' 'rudder'};
 states = {'npos' 'epos' 'alt' 'phi' 'theta' 'psi' 'vel' 'alpha' 'beta' 'p' 'q' 'r' 'nx' 'ny' 'nz' 'mach' 'qbar' 'ps'};
 outputs = {'npos' 'epos' 'alt' 'phi' 'theta' 'psi' 'vel' 'alpha' 'beta' 'p' 'q' 'r' 'nx' 'ny' 'nz' 'mach' 'qbar' 'ps' 'an'};
 sys_mimo = ss(SS_lo.A,SS_lo.B,SS_lo.C,SS_lo.D,'statename',states,...
     'inputname',inputs,...
     'outputname',outputs);
+
 %tf(sys_mimo) to see all the transfer function. Search for "from elevator
 %to an" to find 5.5 answer
 
@@ -355,10 +357,10 @@ H_an_de=tf(an_de_num,an_de_den);
 
 H_an_de_minreal=minreal(H_an_de);
 
-%zpk(H_an_de_minreal) fact
+zpk(H_an_de_minreal) %fact
 
 %Simulate response to a negative step input
 H_an_de=-1*H_an_de;
-step(H_an_de);
+%step(H_an_de);
 
-save('./Chapter 5/FindF16Dynaimcs_workspace.mat')
+save(strcat('./Chapter 5/FindF16Dynaimcs_workspace_', num2str(x_a_label), '.mat'))
