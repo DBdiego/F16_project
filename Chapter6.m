@@ -1,3 +1,4 @@
+%% Creating Matrices for OL analysis
 A_OL_long = [A_longitude_lo(2,2:5) ; A_longitude_lo(3,2:5) ; A_longitude_lo(4,2:5) ; A_longitude_lo(5,2:5)];
 B_OL_long = [A_longitude_lo(2,7) ; A_longitude_lo(3,7) ; A_longitude_lo(4,7) ; A_longitude_lo(5,7)];
 C_OL_long = [C_longitude_lo(2,2:5) ; C_longitude_lo(3,2:5) ; C_longitude_lo(4,2:5) ; C_longitude_lo(5,2:5)]; 
@@ -16,7 +17,7 @@ H_lat = tf(ss_lat);
 
 a = 20.2;
 s = tf('s');
-H_act = a/(s+a);
+H_act = a/(s+a); %actuator dynamics
 
 H_long_actuator = H_long * H_act;
 H_lat_actuator = H_lat * H_act;
