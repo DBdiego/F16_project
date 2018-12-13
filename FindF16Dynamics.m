@@ -28,8 +28,8 @@ polar_plots_wanted = 0; %[Boolean]
 
 %% Trim aircraft to desired altitude and velocity
 %%
-altitude = 15000; %[ft.]
-velocity = 500  ; %[ft./s]
+altitude = 10000; %[ft.]
+velocity = 300  ; %[ft./s]
 
 %altitude = input('Enter the altitude for the simulation (ft)  :  ');
 %velocity = input('Enter the velocity for the simulation (ft/s):  ');

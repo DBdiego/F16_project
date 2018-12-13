@@ -123,35 +123,81 @@ legend('\phi', '\phi original', '\beta', '\beta original', 'p', 'p original','r'
 %% Pole zero maps
 figure 
 pzmap(minreal(H_lat))
+title('pole zero map H_{lat}')
 
 figure
 pzmap(minreal(H_long))
+title('pole zero map H_{long}')
 
 pole(minreal(H_long))
 pole(minreal(H_lat))
 
 %% Step responses (not working very well)
+%% Short Period
+%%
 opt = stepDataOptions('StepAmplitude',-0.005);
-figure
+figure('name', 'short period')
 step(H_long(4),10,opt) %short period
-figure
-subplot(2,1,1)
-step(H_long(2),10,opt) %phugoid
-subplot(2,1,2)
-step(H_long(3),10,opt) %phugoid
+title('')
+ylabel('q [deg/s]')
 
+%% Phugoid
+%%
+opt = stepDataOptions('StepAmplitude',-0.005);
+figure('name', 'phugoid')
+subplot(2,1,1)
+step(H_long(2),300,opt) %phugoid
+title('')
+ylabel('V [ft/s]')
+subplot(2,1,2)
+step(H_long(3),300,opt) %phugoid
+title('')
+ylabel('\alpha [deg]')
+
+
+%% Dutch Roll
+%%
 opt = stepDataOptions('StepAmplitude',+0.025);
-figure
+figure('name', 'dutch roll')
 subplot(2,1,1)
-step(H_lat(3,2),10,opt) %dutch roll
+impulse(H_lat(3,2),10)%,opt) %dutch roll
+title('')
+ylabel('p [deg/s]')
 subplot(2,1,2)
-step(H_lat(4,2),10,opt) %dutch roll
+impulse(H_lat(4,2),10)%,opt) %dutch roll
+title('')
+ylabel('r [deg/s]')
 
-figure
-step(H_lat(1,1),10,opt) %Spiral
 
-figure
-step(H_lat(3,1),10,opt) %Aperiodic Roll
+%% Spiral
+%%
+figure('name', 'Spiral')
+impulse(H_lat(1,1),100)%,opt) %Spiral
+title('')
+ylabel('\phi [deg]')
+
+
+%% Aperiodic Roll
+%%
+figure('name', 'Aperiodic Roll')
+%step(H_lat(3,1),10,opt)
+%impulse(H_lat(3,1),10,opt)
+T=10;
+dt=0.01;
+d_rud=1;
+m_rud=rad2deg(0.025);
+t=0:dt:T;
+N = length(t);
+N_rud = d_rud/dt;
+sig_rud=[m_rud*ones(1,N_rud), zeros(1,N-N_rud)];
+sig_null = zeros(1,N);
+sig_dr=[sig_rud'];
+%[A1 B1 C1 D1] = tf2ss(cell2mat(H_lat(3,1).Numerator), cell2mat(H_lat(3,1).Denominator));
+%y_dr = lsim([A1 B1 C1 D1],sig_dr,t);
+y_dr = lsim(H_lat(3,1),sig_dr,t);
+plot(t,y_dr)
+title('')
+ylabel('p [deg/s]')
 
 %% Short Period Reduced model
 A_SP = [A_OL_long(3,3:4) ; A_OL_long(4,3:4)];
@@ -162,8 +208,43 @@ D_SP = zeros(2,1);
 ss_SP_reduced = ss(A_SP, B_SP, C_SP, D_SP);
 H_SP_reduced = tf(ss_SP_reduced);
 
+H_SP_init = H_SP_reduced(2);
+
+
 figure
 step(H_SP_reduced(2),30)
 hold on
-step(H_long(4),30)
+step(H_long(4),35)
 legend('Reduced 2 states model' , '4 states model')
+title('Short Period Reduced model')
+
+figure
+step(H_SP_reduced(2),10)
+hold on
+step(H_long(4),10)
+legend('Reduced 2 states model' , '4 states model')
+title('Short Period Reduced model')
+
+%% Gibson 
+omega_sp = 0.03*velocity*0.3048;
+damp_rat = 0.5;
+T_theta2 = 1/(0.75*omega_sp);
+
+%desired poles
+p1 = -damp_rat*omega_sp + j*omega_sp*sqrt(1-damp_rat^2);
+p2 = -damp_rat*omega_sp - j*omega_sp*sqrt(1-damp_rat^2);
+
+K = place(A_SP,B_SP,[p1 p2]);
+
+d_alpha = atan(4.572/(velocity*0.3048));
+d_delta_e = K(1)*d_alpha; %Ok between -25 and +25 deg
+
+H_SP_new = tf(ss(A_SP-B_SP*K, B_SP, C_SP , D_SP));
+
+H_SP_new_q = H_SP_new(2);
+
+
+Kf=1;
+F = Kf*(1+T_theta2*s)/(s - zero(H_SP_new_q));
+
+H_gibs = minreal(H_SP_new_q*F);
