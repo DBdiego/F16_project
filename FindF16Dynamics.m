@@ -19,7 +19,7 @@ newline = sprintf('\n');
 
 %% Initial Values
 %%
-x_a_label = 15;
+x_a_label = 0;
 x_a = x_a_label*0.3048 ; %[ft.]
 gD  = 9.80665          ; %[m/s^2]
 
