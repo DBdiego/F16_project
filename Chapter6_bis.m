@@ -273,6 +273,7 @@ step_info = stepinfo(H_gibs_new);
 qm_qs = step_info.Peak/1 ; %q_max / q_steady
 
 %response of the sys to a 10s ramp
+figure
 t_ramp=0:0.01:10;
 alpha=1;
 ramp=alpha*t;

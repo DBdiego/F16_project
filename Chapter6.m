@@ -291,7 +291,27 @@ end
 
 
 
+%% Gibson criterion
+CAP = (gD*omega_sp^2*T_theta2)/velocity;
 
+step_info = stepinfo(H_gibs_new);
+qm_qs = step_info.Peak/1 ; %q_max / q_steady
+
+%response of the sys to a 10s ramp
+figure
+t_ramp=0:0.01:10;
+alpha=1;
+ramp=alpha*t;
+input_ramp = [ramp 10*ones(1,length(t_ramp)-1)];
+t_sig_ramp = 0:0.01:20;
+[y_ramp,t_ramp]=lsim(H_gibs_new,input_ramp,t_sig_ramp);
+plot(t_ramp,y_ramp)
+hold on
+plot(t_ramp,input_ramp)
+title('')
+
+DB = findpeaks(y_ramp,'NPeaks',1) - 10; %Drop Back value
+DB_qs = DB / 10; %%% = T_theta2 - (2*damp_rat/omega_sp); ?
 
 
 
