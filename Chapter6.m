@@ -26,7 +26,7 @@ H_lat_actuator  = H_lat  * H_act;
 
 eigenmotion_plots = 0;
 four_vs_two_plots = 0;
-steady_state_error_plot = 1;
+steady_state_error_plot = 0;
 
 if eigenmotion_plots
     %% Comparison with original model
@@ -292,26 +292,28 @@ end
 
 
 %% Gibson criterion
-CAP = (gD*omega_sp^2*T_theta2)/velocity;
+CAP = (gD*omega_sp^2*T_theta2)/velocity
 
-step_info = stepinfo(H_gibs_new);
-qm_qs = step_info.Peak/1 ; %q_max / q_steady
+step_info = stepinfo(H_gibs);
+qm_qs = step_info.Peak/1  %q_max / q_steady
+
 
 %response of the sys to a 10s ramp
 figure
 t_ramp=0:0.01:10;
 alpha=1;
-ramp=alpha*t;
+ramp=alpha*t_ramp;
 input_ramp = [ramp 10*ones(1,length(t_ramp)-1)];
 t_sig_ramp = 0:0.01:20;
-[y_ramp,t_ramp]=lsim(H_gibs_new,input_ramp,t_sig_ramp);
+[y_ramp,t_ramp]=lsim(H_gibs,input_ramp,t_sig_ramp);
 plot(t_ramp,y_ramp)
 hold on
 plot(t_ramp,input_ramp)
 title('')
 
 DB = findpeaks(y_ramp,'NPeaks',1) - 10; %Drop Back value
-DB_qs = DB / 10; %%% = T_theta2 - (2*damp_rat/omega_sp); ?
+DB_qs = DB / 10 %%% = T_theta2 - (2*damp_rat/omega_sp); ?
+DB_qs_des = T_theta2 - (2*damp_rat/omega_sp)
 
 
 

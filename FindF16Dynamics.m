@@ -28,8 +28,8 @@ polar_plots_wanted = 0; %[Boolean]
 
 %% Trim aircraft to desired altitude and velocity
 %%
-altitude = 10000; %[ft.]
-velocity = 350  ; %[ft./s]
+altitude = 15000; %[ft.]
+velocity = 500  ; %[ft./s]
 
 %altitude = input('Enter the altitude for the simulation (ft)  :  ');
 %velocity = input('Enter the velocity for the simulation (ft/s):  ');
@@ -353,14 +353,14 @@ all_tfs=tf(sys_mimo);
 
 an_de_num=cell2mat(all_tfs.Numerator(19,2));
 an_de_den=cell2mat(all_tfs.Denominator(19,2));
-H_an_de=tf(an_de_num,an_de_den);
+H_an_de_original=tf(an_de_num,an_de_den);
 
-H_an_de_minreal=minreal(H_an_de);
+H_an_de_minreal=minreal(-1*H_an_de_original);
 
 zpk(H_an_de_minreal) %fact
 
 %Simulate response to a negative step input
-H_an_de=-1*H_an_de;
+H_an_de=-1*H_an_de_original;
 %step(H_an_de);
 
 save(strcat('./Chapter 5/FindF16Dynaimcs_workspace_', num2str(x_a_label), '.mat'))
